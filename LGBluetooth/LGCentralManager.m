@@ -306,8 +306,9 @@ static LGCentralManager *sharedInstance = nil;
 {
 	self = [super init];
 	if (self) {
+        NSDictionary *options  = @{CBCentralManagerOptionShowPowerAlertKey: @(NO)};
         _centralQueue = dispatch_queue_create("com.LGBluetooth.LGCentralQueue", DISPATCH_QUEUE_SERIAL);
-        _manager      = [[CBCentralManager alloc] initWithDelegate:self queue:self.centralQueue];
+        _manager      = [[CBCentralManager alloc] initWithDelegate:self queue:self.centralQueue options:options];
         _cbCentralManagerState = _manager.state;
         _scannedPeripherals = [NSMutableArray new];
         _peripheralsCountToStop = NSUIntegerMax;
