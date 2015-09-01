@@ -78,6 +78,11 @@ NSString * const kConnectionMissingErrorMessage = @"BLE Device is not connected"
     return [self.cbPeripheral name];
 }
 
+- (NSString *)localName
+{
+    return self.advertisingData[CBAdvertisementDataLocalNameKey];
+}
+
 
 /*----------------------------------------------------*/
 #pragma mark - Overide Methods -

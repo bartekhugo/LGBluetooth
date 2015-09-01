@@ -116,6 +116,11 @@ typedef void(^LGPeripheralRSSIValueCallback)(NSNumber *RSSI, NSError *error);
 @property (weak, nonatomic, readonly) NSString *name;
 
 /**
+ * Local name of peripheral (CBAdvertisementDataLocalNameKey)
+ */
+@property (weak, nonatomic, readonly) NSString *localName;
+
+/**
  * Indicates if latest disconect was made by watchdog
  * note : that watchdog works only by calling connectWithTimeout:completion:
  */
