@@ -36,7 +36,7 @@ typedef void (^LGCharacteristicWriteCallback) (NSError *error);
 /**
  * NSString representation of 16/128 bit CBUUID
  */
-@property (weak, nonatomic, readonly) NSString *UUIDString;
+@property (strong, nonatomic, readonly) NSString *UUIDString;
 
 /**
  * Enables or disables notifications/indications for the characteristic 

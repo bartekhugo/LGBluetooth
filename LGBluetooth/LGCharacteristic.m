@@ -40,6 +40,8 @@
 
 @property (strong, nonatomic) LGCharacteristicReadCallback updateCallback;
 
+@property (strong, nonatomic, readwrite) NSString *UUIDString;
+
 @end
 
 @implementation LGCharacteristic
@@ -74,7 +76,10 @@
 
 - (NSString *)UUIDString
 {
-    return [self.cbCharacteristic.UUID representativeString];
+    if (!_UUIDString) {
+        _UUIDString = [self.cbCharacteristic.UUID representativeString];
+    }
+    return _UUIDString;
 }
 
 /*----------------------------------------------------*/
