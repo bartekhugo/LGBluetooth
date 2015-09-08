@@ -35,6 +35,8 @@
 
 @property (copy, nonatomic) LGServiceDiscoverCharacterisitcsCallback discoverCharBlock;
 
+@property (strong, nonatomic, readwrite) NSString *UUIDString;
+
 @end
 
 @implementation LGService
@@ -45,7 +47,10 @@
 
 - (NSString *)UUIDString
 {
-    return [self.cbService.UUID representativeString];
+    if (!_UUIDString) {
+        _UUIDString = [self.cbService.UUID representativeString];
+    }
+    return _UUIDString;
 }
 
 /*----------------------------------------------------*/

@@ -42,7 +42,7 @@ typedef void(^LGServiceDiscoverCharacterisitcsCallback)(NSArray *characteristics
 /**
  * NSString representation of 16/128 bit CBUUID
  */
-@property (weak, nonatomic, readonly) NSString *UUIDString;
+@property (strong, nonatomic, readonly) NSString *UUIDString;
 
 /**
  * Flag to indicate discovering characteristics or not
