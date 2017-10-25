@@ -92,7 +92,10 @@
 {
     NSMutableArray *updatedCharacteristics = [NSMutableArray new];
     for (CBCharacteristic *characteristic in self.cbService.characteristics) {
-        [updatedCharacteristics addObject:[[LGCharacteristic alloc] initWithCharacteristic:characteristic]];
+        LGCharacteristic *lgCharacteristic = [[LGCharacteristic alloc] initWithCharacteristic:characteristic];
+        if (lgCharacteristic) {
+            [updatedCharacteristics addObject:lgCharacteristic];
+        }
     }
     _characteristics = updatedCharacteristics;
 }
@@ -123,6 +126,9 @@
 
 - (instancetype)initWithService:(CBService *)aService
 {
+    if (![aService isKindOfClass:[CBService class]]) {
+        return nil;
+    }
     if (self = [super init]) {
         _cbService = aService;
     }

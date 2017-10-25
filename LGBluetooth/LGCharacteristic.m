@@ -200,6 +200,9 @@
 
 - (instancetype)initWithCharacteristic:(CBCharacteristic *)aCharacteristic
 {
+    if (![aCharacteristic isKindOfClass:[CBCharacteristic class]]) {
+        return nil;
+    }
     if (self = [super init]) {
         _cbCharacteristic = aCharacteristic;
     }

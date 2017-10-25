@@ -53,6 +53,11 @@
 @property (copy, nonatomic) LGCentralManagerDiscoverPeripheralsCallback scanBlock;
 
 /**
+ * Completion block for peripheral incremental scanning
+ */
+@property (copy, nonatomic) LGCentralManagerDiscoverPeripheralsChangesCallback changesBlock;
+
+/**
  * CBCentralManager's state updated by centralManagerDidUpdateState:
  */
 @property(nonatomic) CBCentralManagerState cbCentralManagerState;
@@ -103,6 +108,12 @@
 #pragma mark - Public Methods -
 /*----------------------------------------------------*/
 
+- (void)scanForPeripheralsWithChanges:(LGCentralManagerDiscoverPeripheralsChangesCallback)aChangesCallback
+{
+    self.changesBlock = aChangesCallback;
+    [self scanForPeripherals];
+}
+
 - (void)scanForPeripherals
 {
     [self scanForPeripheralsWithServices:nil
@@ -121,6 +132,7 @@
         self.scanBlock(self.peripherals);
     }
     self.scanBlock = nil;
+    self.changesBlock = nil;
 }
 
 - (void)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs
@@ -130,6 +142,15 @@
     self.scanning = YES;
 	[self.manager scanForPeripheralsWithServices:serviceUUIDs
                                          options:options];
+}
+
+- (void)scanForPeripheralsByInterval:(NSUInteger)aScanInterval
+                             changes:(LGCentralManagerDiscoverPeripheralsChangesCallback)aChangesCallback
+                          completion:(LGCentralManagerDiscoverPeripheralsCallback)aCallback
+{
+    self.changesBlock = aChangesCallback;
+    [self scanForPeripheralsByInterval:aScanInterval
+                            completion:aCallback];
 }
 
 - (void)scanForPeripheralsByInterval:(NSUInteger)aScanInterval
@@ -205,8 +226,14 @@
         }
     }
     if (!wrapper) {
-        wrapper = [[LGPeripheral alloc] initWithPeripheral:aPeripheral manager:self];
-        [self.scannedPeripherals addObject:wrapper];
+        if ([aPeripheral.delegate isKindOfClass:[LGPeripheral class]]) {
+            wrapper = (LGPeripheral *)aPeripheral.delegate;
+        } else {
+            wrapper = [[LGPeripheral alloc] initWithPeripheral:aPeripheral manager:self];
+        }
+        if (wrapper) {
+            [self.scannedPeripherals addObject:wrapper];
+        }
     }
     return wrapper;
 }
@@ -252,7 +279,7 @@
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
-    self.cbCentralManagerState = central.state;
+    self.cbCentralManagerState = (CBCentralManagerState)central.state;
     NSString *message = [self stateMessage];
     if (message) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -275,6 +302,10 @@
             lgPeripheral.RSSI = (lgPeripheral.RSSI + [RSSI integerValue]) / 2;
         }
         lgPeripheral.advertisingData = advertisementData;
+        
+        if (self.changesBlock != nil) {
+            self.changesBlock(lgPeripheral);
+        }
         
         if ([self.scannedPeripherals count] >= self.peripheralsCountToStop) {
             [NSObject cancelPreviousPerformRequestsWithTarget:self
