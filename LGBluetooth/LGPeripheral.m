@@ -321,9 +321,6 @@ NSString * const kConnectionMissingErrorMessage = @"BLE Device is not connected"
 
 - (instancetype)initWithPeripheral:(CBPeripheral *)aPeripheral manager:(LGCentralManager *)manager
 {
-    if (![aPeripheral isKindOfClass:[CBPeripheral class]]) {
-        return nil;
-    }
     if (self = [super init]) {
         _cbPeripheral = aPeripheral;
         _cbPeripheral.delegate = self;
